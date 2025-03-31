@@ -1,3 +1,4 @@
+//년 월 일 식사시간 선택하고 url 요청
 document.getElementById("searchForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -33,6 +34,8 @@ document.getElementById("searchForm").addEventListener("submit", async function 
 //메뉴 수정 및 삭제에  필요한 전역 변수 
 let newP = null; //기존 메뉴를 대체할 메뉴 
 let tempId = null; //조회한 메뉴 
+
+//수정 버튼 클릭 이벤트에 대한 함수 - 모달 생성  
 async function updateMeal(id,btn){
     tempId = id;
     newP = btn.closest('tr').querySelector('p');
@@ -41,6 +44,7 @@ async function updateMeal(id,btn){
     document.getElementById('editModal').style.display = "flex";
     document.getElementById('editModal').focus();
 }
+//모달에서 수정 버튼 누르는 이벤트에 대한 스크립트 - DB 데이터 변경 
 document.getElementById('edit-confirm').addEventListener('click', async () => {
     const newMenu = document.getElementById('editInput').value;
 
@@ -57,14 +61,19 @@ document.getElementById('edit-confirm').addEventListener('click', async () => {
     }
     document.getElementById('editModal').style.display = 'none';
 });
+//모달에서 취소 버튼 누르는 이벤트에 대한 스크립트 - 모달 닫기 
 document.getElementById('edit-cancel').addEventListener('click', () =>{
     document.getElementById('editModal').style.display = 'none';
 });
+
+//삭제 버튼 클릭 이벤트에 대한 함수 - 모달 생성 
 async function deleteMeal(id,btn) {
     tempId = id;
     document.getElementById('deleteModal').style.display = "flex";
     document.getElementById('deleteModal').focus();
 }
+
+//모달에서 삭제 버튼 누르는 이벤트에 대한 스크립트 - DB 데이터 삭제
 document.getElementById('delete-confirm').addEventListener('click', async () => {
     const response = await fetch('/modify/delete', {
         method: 'Post',
@@ -79,6 +88,7 @@ document.getElementById('delete-confirm').addEventListener('click', async () => 
     }
     document.getElementById('deleteModal').style.display = 'none';  
 });
+//모달에서 취소 버튼 누르는 이벤트에 대한 스크립트 - 모달 닫기 
 document.getElementById('delete-cancel').addEventListener('click', () =>{
     document.getElementById('deleteModal').style.display = 'none';
 });

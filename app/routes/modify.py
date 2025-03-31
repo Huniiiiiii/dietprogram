@@ -1,11 +1,15 @@
 from flask import request, render_template,jsonify
 import pymysql
-
+#데이터 베이스 연결 부분
+#데이터베이스 host, user, pswd, db명이 상이하면 연결 불가 -> 나중에 맞출 것
 def get_db_connection():
     return pymysql.connect(host='localhost',user='root',
                            password='0000',db='test',charset='utf8')
 
+#app에서 자꾸 에러가 나 register_routes() 함수 안에 작성 (추후 수정 가능하면 할 것)
+
 def register_routes(app):
+
     @app.route('/modify',methods=['GET'])
     def modify_meal():
         return render_template("modify.html")
@@ -18,7 +22,8 @@ def register_routes(app):
         if year and month and day:
             date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
         else:
-            date = None #error 발생을 여기서 시킬지는 고민해봐야 한다. 
+            date = None 
+        
         conn = get_db_connection()
         cur= conn.cursor()
         cur.execute('''
@@ -32,6 +37,7 @@ def register_routes(app):
             result.append({'id':row[0],'menu':row[1],'date':row[2], 'time':row[3]})
         else: 
             result=[]
+            
         cur.close()
         conn.close()
         return jsonify(result)
