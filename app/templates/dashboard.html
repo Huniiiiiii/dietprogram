@@ -12,6 +12,33 @@
     .dashboard-card { min-height: 400px; }
     .dashboard-chart { width: 280px; height: 280px; }
     .chart-wrapper { max-width: 180px; width: 100%; }
+    #calendarArea table {
+    width: 100%;                /* 전체 폭을 채우기 */
+    table-layout: fixed;        /* 열 너비 균등 분배 */
+    font-size: 11px;
+    margin-top: 10px;
+    border-collapse: collapse;
+  }
+  #calendarArea th,
+  #calendarArea td {
+    padding: 4px;
+    vertical-align: top;
+    height: 70px;               /* 세로 높이를 줄임 */
+    border: 1px solid #ccc;
+  }
+
+  #calendarArea td div {
+    margin: 1px 0;
+  }
+
+  #calendarArea .meal {
+    font-size: 10px;
+    margin: 1px 0;
+    height: 16px;               /* 아/점/저 세로 높이 압축 */
+    line-height: 16px;
+    text-align: center;
+    border-radius: 3px;
+  }
   </style>
 </head>
 <body id="page-top">
@@ -139,6 +166,7 @@
       fetch(`/dashboard/${userId}?year=${year}&month=${month}`)
         .then(res => res.json())
         .then(data => {
+          generateCalendar(year, month, data.daily_meals);
           const percent = (data.monthly_progress.recorded_days / data.monthly_progress.total_days * 100).toFixed(1);
           document.getElementById("monthSummary").textContent =
             `${year}년 ${month}월은 총 ${data.monthly_progress.total_days}일 중 ${data.monthly_progress.recorded_days}일 기록했어요 (${percent}%)`;
@@ -202,6 +230,56 @@
     });
 
     loadDashboardData(currentYear, currentMonth);
+    
+    function generateCalendar(year, month, mealData) {
+  const calendarArea = document.getElementById("calendarArea");
+  calendarArea.innerHTML = "";
+
+  const table = document.createElement("table");
+  table.className = "table table-bordered";
+  const headerRow = document.createElement("tr");
+  ["일", "월", "화", "수", "목", "금", "토"].forEach(day => {
+    const th = document.createElement("th");
+    th.textContent = day;
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
+
+  const date = new Date(year, month - 1, 1);
+  const startDay = date.getDay();
+  const lastDate = new Date(year, month, 0).getDate();
+
+  let currentRow = document.createElement("tr");
+  for (let i = 0; i < startDay; i++) {
+    currentRow.appendChild(document.createElement("td"));
+  }
+
+  for (let day = 1; day <= lastDate; day++) {
+    if (currentRow.children.length === 7) {
+      table.appendChild(currentRow);
+      currentRow = document.createElement("tr");
+    }
+
+    const cell = document.createElement("td");
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const record = mealData[dateStr] || { breakfast: 0, lunch: 0, dinner: 0 };
+
+    cell.innerHTML = `
+      <div><strong>${day}</strong></div>
+      <div class="meal" style="background-color:${record.breakfast ? 'lightgreen' : 'lightcoral'}">아</div>
+      <div class="meal" style="background-color:${record.lunch ? 'lightgreen' : 'lightcoral'}">점</div>
+      <div class="meal" style="background-color:${record.dinner ? 'lightgreen' : 'lightcoral'}">저</div>
+    `;
+    currentRow.appendChild(cell);
+  }
+
+  while (currentRow.children.length < 7) {
+    currentRow.appendChild(document.createElement("td"));
+  }
+
+  table.appendChild(currentRow);
+  calendarArea.appendChild(table);
+}
   </script>
 </body>
 </html>
