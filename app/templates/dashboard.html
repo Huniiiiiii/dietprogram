@@ -1,12 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MealLog Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/sb-admin-2.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .dashboard-card { min-height: 400px; }
+    .dashboard-chart { width: 280px; height: 280px; }
+    .chart-wrapper { max-width: 180px; width: 100%; }
+  </style>
 </head>
-<body>
-    <h1>대시보드</h1>
-    <a href="/modify">조회 및 삭제 페이지로 이동</a>
+<body id="page-top">
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">MealLog</div>
+      </a>
+      <hr class="sidebar-divider my-0" />
+      <li class="nav-item"><a class="nav-link" href="/info"><i class="fas fa-fw fa-info-circle"></i><span>Info</span></a></li>
+      <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-fw fa-chart-bar"></i><span>Dashboard</span></a></li>
+      <li class="nav-item"><a class="nav-link" href="/modify"><i class="fas fa-fw fa-clipboard-list"></i><span>Diets</span></a></li>
+      <li class="nav-item"><a class="nav-link" href="/mypage"><i class="fas fa-fw fa-user"></i><span>My Page</span></a></li>
+    </ul>
+
+    <!-- Content -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/mypage"><i class="fas fa-user"></i> My Page</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container-fluid">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 text-gray-800">식단 기록 대시보드</h1>
+            <div>
+              <select id="yearSelect" class="form-select form-select-sm d-inline-block mr-2"></select>
+              <select id="monthSelect" class="form-select form-select-sm d-inline-block"></select>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- 기록 현황 -->
+            <div class="col-lg-6 mb-4">
+              <div class="card dashboard-card">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">1. 이번 달 기록 현황</h6>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                  <p id="monthSummary" class="text-dark font-weight-bold mb-3 text-center"></p>
+                  <canvas id="monthProgressChart" class="dashboard-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- 끼니별 비율 -->
+            <div class="col-lg-6 mb-4">
+              <div class="card dashboard-card">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">2. 끼니별 비율</h6>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                  <p class="text-dark font-weight-bold mb-3 text-center">어떤 끼니를 주로 기록했는지 한눈에 보여줘요</p>
+                  <div class="chart-wrapper">
+                    <canvas id="mealPieChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOP3 음식 -->
+            <div class="col-lg-6 mb-4">
+              <div class="card dashboard-card">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">3. 자주 먹은 음식 TOP3</h6>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                  <p class="text-dark font-weight-bold mb-3 text-center">내가 가장 자주 먹은 메뉴를 알려줘요</p>
+                  <ul id="topFoodsList" class="list-group w-75"></ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 일별 기록 여부 -->
+            <div class="col-lg-6 mb-4">
+              <div class="card dashboard-card">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">4. 일별 기록 여부</h6>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                  <p class="text-dark font-weight-bold mb-3 text-center">식단을 기록한 날과 빠진 날을 한눈에 확인해요</p>
+                  <div id="calendarArea" class="text-center">📅 캘린더는 추후 제공 예정</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- container-fluid -->
+      </div> <!-- content -->
+    </div> <!-- content-wrapper -->
+  </div> <!-- wrapper -->
+
+  <script>
+    const userId = 1;
+    const yearSelect = document.getElementById("yearSelect");
+    const monthSelect = document.getElementById("monthSelect");
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const maxYear = currentYear + 5;
+
+    for (let y = 2025; y <= maxYear; y++) {
+      yearSelect.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}년</option>`;
+    }
+    for (let m = 1; m <= 12; m++) {
+      const padded = m.toString().padStart(2, '0');
+      monthSelect.innerHTML += `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${padded}월</option>`;
+    }
+
+    let progressChart = null;
+    let pieChart = null;
+
+    function loadDashboardData(year, month) {
+      console.log(`[DEBUG] 요청: year=${year}, month=${month}`);
+      fetch(`/dashboard/${userId}?year=${year}&month=${month}`)
+        .then(res => res.json())
+        .then(data => {
+          const percent = (data.monthly_progress.recorded_days / data.monthly_progress.total_days * 100).toFixed(1);
+          document.getElementById("monthSummary").textContent =
+            `${year}년 ${month}월은 총 ${data.monthly_progress.total_days}일 중 ${data.monthly_progress.recorded_days}일 기록했어요 (${percent}%)`;
+
+          if (progressChart) progressChart.destroy();
+          if (pieChart) pieChart.destroy();
+
+          progressChart = new Chart(document.getElementById('monthProgressChart'), {
+            type: 'bar',
+            data: {
+              labels: ['기록률(%)'],
+              datasets: [{
+                label: '기록된 날 수',
+                data: [percent],
+                backgroundColor: 'rgba(75, 192, 192, 0.7)'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: { y: { beginAtZero: true, max: 100 } },
+              plugins: { legend: { display: false } }
+            }
+          });
+
+          const times = data.meal_time_distribution.map(row => row.time);
+          const counts = data.meal_time_distribution.map(row => row.count);
+
+          pieChart = new Chart(document.getElementById('mealPieChart'), {
+            type: 'pie',
+            data: {
+              labels: times,
+              datasets: [{
+                data: counts,
+                backgroundColor: ['#ff9999', '#66b3ff', '#99ff99']
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: { legend: { position: 'bottom' } }
+            }
+          });
+
+          const topList = document.getElementById('topFoodsList');
+          topList.innerHTML = '';
+          data.top_foods.forEach(food => {
+            const li = document.createElement('li');
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `<span>${food.menu}</span><span class="badge badge-primary badge-pill">${food.count}회</span>`;
+            topList.appendChild(li);
+          });
+        });
+    }
+
+    yearSelect.addEventListener("change", () => {
+      loadDashboardData(parseInt(yearSelect.value), parseInt(monthSelect.value));
+    });
+    monthSelect.addEventListener("change", () => {
+      loadDashboardData(parseInt(yearSelect.value), parseInt(monthSelect.value));
+    });
+
+    loadDashboardData(currentYear, currentMonth);
+  </script>
 </body>
 </html>
