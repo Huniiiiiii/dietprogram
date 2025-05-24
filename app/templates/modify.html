@@ -17,45 +17,19 @@
 
         <!-- 사이드 바 시작-->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">MealLog</div>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/modify">
+              <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="sidebar-brand-text mx-3">MealLog</div>
             </a>
-            <hr class="sidebar-divider my-0">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/info">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Info</span>
-                </a>
-            </li>
-            <hr class="sidebar-divider my-0">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/dashboard">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <hr class="sidebar-divider my-0">
-            <li class="nav-item">
-                <a class= "nav-link" href="/modify">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Diets</span>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/mypage">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>My Page</span>
-                </a>
-            </li>
-
-            <hr class="sidebar-divider d-none d-md-block">
-
-        </ul>
+            <hr class="sidebar-divider my-0" />
+            <li class="nav-item"><a class="nav-link" href="/info"><i class="fas fa-fw fa-info-circle"></i><span>Info</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-fw fa-chart-bar"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/modify"><i class="fas fa-fw fa-clipboard-list"></i><span>Diets</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/mypage"><i class="fas fa-fw fa-user"></i><span>My Page</span></a></li>
+            <hr class="sidebar-divider d-none d-md-block" />
+          </ul>
         <!--사이드 바 종료-->
 
         <!--컨텐츠 래퍼 시작-->
@@ -117,7 +91,7 @@
                                     </div>
                                     <div class="form-group mx-2 my-2">
                                         <label for="searchDay" class="mr-2">일</label>
-                                        <select id="searchDay" name="searchDay" class="form-control" required>
+                                        <select id="searchDay" name="searchDay" class="form-control" >
                                             <option value="">선택</option>
                                             {% for d in range(1,32) %}
                                                 <option value="{{ d }}">{{ d }}일</option>
@@ -126,7 +100,7 @@
                                     </div>
                                     <div class="form-group mx-2 my-2">
                                         <label for="searchTime" class="mr-2">식사 시간</label>
-                                        <select id="searchTime" name="searchTime" class="form-control" required>
+                                        <select id="searchTime" name="searchTime" class="form-control" >
                                             <option value="">선택하세요</option>
                                             <option value="아침">아침</option>
                                             <option value="점심">점심</option>

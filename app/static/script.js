@@ -23,9 +23,10 @@ function getCookie(name) {
 
 // DOM 로드 시, 사용자의 최근 식단 표시
 document.addEventListener('DOMContentLoaded', async function () {
-    let userId = getCookie('user_id');  // 쿠키에서 user_id 가져오기
+    // let userId = getCookie('user_id');  // 쿠키에서 user_id 가져오기
+    let userId = "{{ user_id }}";
     if (!userId) {
-        // 쿠키에 없으면 강제로 1로 설정
+        // 현재는 쿠키에 없으면 강제로 1로 설정
         userId = '1';
         alert('로그인이 필요합니다. (임시로 user_id=1 사용)');
     }
@@ -79,19 +80,19 @@ searchForm.addEventListener('submit', async function (event) {
     const month = document.getElementById('searchMonth').value;
     const day = document.getElementById('searchDay').value;
     const time = document.getElementById('searchTime').value;
-    let userId = getCookie('user_id');  // 쿠키에서 user_id 가져오기
-    if (!userId) {
-        // 쿠키 없으면 강제로 1로 설정 (임시) -> 나중에 삭제 
-        userId = '1';
-        alert('로그인이 필요합니다. (임시로 user_id=1 사용)');
-    }
-    if (!userId){
-        userId = '1'
-    }
+    user_id = "{{ user_id }}";
+    // if (!userId) {
+    //     // 쿠키 없으면 강제로 1로 설정 (임시) -> 나중에 삭제 
+    //     userId = '1';
+    //     alert('로그인이 필요합니다. (임시로 user_id=1 사용)');
+    // }
+    // if (!userId){
+    //     userId = '1'
+    // }
     const response = await fetch('/modify/search', {
         method : 'POST',
         headers : {'Content-Type': 'application/json'},
-        body : JSON.stringify({year, month, day, time, user_id:userId})
+        body : JSON.stringify({year, month, day, time})
     })
     const data = await response.json();
     // 조회 페이지 바디 부분 (js로 html 생성)
@@ -106,10 +107,10 @@ searchForm.addEventListener('submit', async function (event) {
             <td class="d-flex justify-content-between align-items-center">
                 <span class="menu-text mb-0">${meal.menu}</span>
                 <div>
-                    <button type="button" class="btn btn-primary btn-sm mr-2" onclick="editMeal(${meal.id}, this)">
+                    <button type="button" class="btn btn-primary btn-circle btn-sm" onclick="editMeal(${meal.id}, this)">
                         <i class="fas fa-pen"></i>
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteMeal(${meal.id}, this)">
+                    <button type="button" class="btn btn-danger btn-circle btn-sm" onclick="deleteMeal(${meal.id}, this)">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -153,7 +154,7 @@ document.getElementById('add-confirm').onclick = async function () {
     const day = document.getElementById('addDay').value;
     const time = document.getElementById('addTime').value;
     const newMenu = document.getElementById('addInput').value;
-    let userId = getCookie('user_id');  // 쿠키에서 user_id 가져오기
+    let userId = "{{ user_id }}"; 
     if (!userId) {
         // 쿠키에 없으면 강제로 1로 설정
         userId = '1';
@@ -169,7 +170,8 @@ document.getElementById('add-confirm').onclick = async function () {
         alert("추가가 완료되었습니다.");
         location.reload();
     }else{
-        alert("추가를 실패하였습니다.")
+        const result = await response.json();
+        alert(result.reason || "추가를 실패하였습니다.");
     }
     //추가 모달 숨김 함수 호출
     hideModal(document.getElementById('addModal'));
