@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--html/css 템플릿-->
+    <link rel="stylesheet" href="../static/sb-admin-2.css">
+    <!--벡터 이미지를 위한 소스-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="/static/clipboard-list-solid.png" type="image/png">
+    <title>My Page</title>
+</head>
+
+<body id="page-top">
+    <!--전체 페이지 래퍼 시작-->
+    <div id="wrapper">
+
+        <!-- 사이드 바 시작-->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/modify">
+              <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="sidebar-brand-text mx-3">MealLog</div>
+            </a>
+            <hr class="sidebar-divider my-0" />
+            <li class="nav-item"><a class="nav-link" href="/info"><i class="fas fa-fw fa-info-circle"></i><span>Info</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-fw fa-chart-bar"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/modify"><i class="fas fa-fw fa-clipboard-list"></i><span>Diets</span></a></li>
+            <li class="nav-item active"><a class="nav-link" href="/mypage"><i class="fas fa-fw fa-user"></i><span>My Page</span></a></li>
+            <hr class="sidebar-divider d-none d-md-block" />
+        </ul>
+        <!--사이드 바 종료-->
+
+        <!--컨텐츠 래퍼 시작-->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!--컨텐츠 시작-->
+            <div id="content">
+
+                <!--상단 바-->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!--상단 바 종료-->
+
+                <!--컨텐츠 최상위 컨테이너 시작-->
+                <div class="container-fluid">
+                    <!--페이지 제목-->
+                    <h1 class="h3 mb-4 text-gray-800">마이페이지</h1>
+
+                    <!-- 사용자 정보 카드 -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">사용자 정보</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>ID:</strong> {{ user_name }}</p>
+                                    <p><strong>이름:</strong> {{ user_fullname }}</p>
+                                    <a href="/logout" class="btn btn-danger btn-icon-split mt-3">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                        </span>
+                                        <span class="text">로그아웃</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--컨텐츠 종료-->
+            </div>
+            <!--전체 컨텐츠 종료-->
+        </div>
+        <!--컨텐츠 래퍼 종료-->
+    </div>
+    <!--래퍼 종료-->
+
+    <script src="../static/script.js"></script>
+</body>
+</html>
