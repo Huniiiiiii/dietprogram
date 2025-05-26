@@ -100,23 +100,30 @@ searchForm.addEventListener('submit', async function (event) {
     body.innerHTML= '';
     if (data.length > 0){
         document.getElementById("resultArea").style.display='block';
-        const meal = data[0]
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td class="d-flex justify-content-between align-items-center">
-                <span class="menu-text mb-0">${meal.menu}</span>
-                <div>
-                    <button type="button" class="btn btn-primary btn-circle btn-sm" onclick="editMeal(${meal.id}, this)">
-                        <i class="fas fa-pen"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger btn-circle btn-sm" onclick="deleteMeal(${meal.id}, this)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-            `;
-        body.appendChild(row);
+        data.forEach(meal => {
+            const row = document.createElement("tr");
+    
+            row.innerHTML = `
+                <td>
+                    <div class="d-flex justify-content-between">
+                    <div>
+                        <div><strong>${meal.menu}</strong></div>
+                        <div class="text-muted small">${new Date(meal.date).toLocaleDateString('ko-KR')}</div>
+                        <div class="text-muted small">${meal.time}</div>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap: 0.5rem;">
+                        <button class="btn btn-primary btn-circle btn-sm" onclick="editMeal(${meal.id}, this)">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn btn-danger btn-circle btn-sm" onclick="deleteMeal(${meal.id}, this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    </div>
+                </td>
+                `;
+            body.appendChild(row);
+        });
     }else {
         alert("해당 조건 식단이 존재하지 않습니다.");
     }   
