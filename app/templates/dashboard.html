@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MealLog</title>
+  <title>MealLog-dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="/static/sb-admin-2.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -13,8 +13,8 @@
     .dashboard-chart { width: 280px; height: 280px; }
     .chart-wrapper { max-width: 180px; width: 100%; }
     #calendarArea table {
-    width: 100%;                /* 전체 폭을 채우기 */
-    table-layout: fixed;        /* 열 너비 균등 분배 */
+    width: 100%;                
+    table-layout: fixed;       
     font-size: 11px;
     margin-top: 10px;
     border-collapse: collapse;
@@ -23,7 +23,7 @@
   #calendarArea td {
     padding: 4px;
     vertical-align: top;
-    height: 70px;               /* 세로 높이를 줄임 */
+    height: 70px;              
     border: 1px solid #ccc;
   }
 
@@ -34,7 +34,7 @@
   #calendarArea .meal {
     font-size: 10px;
     margin: 1px 0;
-    height: 16px;               /* 아/점/저 세로 높이 압축 */
+    height: 16px;              
     line-height: 16px;
     text-align: center;
     border-radius: 3px;
@@ -53,7 +53,7 @@
       </a>
       <hr class="sidebar-divider my-0" />
       <li class="nav-item"><a class="nav-link" href="/info"><i class="fas fa-fw fa-info-circle"></i><span>Info</span></a></li>
-      <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-fw fa-chart-bar"></i><span>Dashboard</span></a></li>
+      <li class="nav-item active"><a class="nav-link" href="/dashboard"><i class="fas fa-fw fa-chart-bar"></i><span>Dashboard</span></a></li>
       <li class="nav-item"><a class="nav-link" href="/modify"><i class="fas fa-fw fa-clipboard-list"></i><span>Diets</span></a></li>
       <li class="nav-item"><a class="nav-link" href="/mypage"><i class="fas fa-fw fa-user"></i><span>My Page</span></a></li>
     </ul>
