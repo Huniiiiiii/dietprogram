@@ -161,7 +161,78 @@ def register_routes(app):
         cur.close()
         conn.close()
         return jsonify({'status': 'success'})
+
+    @app.route('/modify/update', methods=['POST'])
+    def update_meal():
+        data = request.get_json()
+        meal_id = data.get('id')
+        menu = data.get('menu')
+        year = data.get('year')
+        month = data.get('month')
+        day = data.get('day')
+        time = data.get('time')
+
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'Invalid user ID'}), 400
+
+        date = f"{year.zfill(4)}-{month.zfill(2)}-{day.zfill(2)}"
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # 해당 식단 존재 여부 확인
+        cur.execute('''
+            SELECT COUNT(*) AS cnt FROM diets
+            WHERE id = %s AND user_id = %s
+        ''', (meal_id, user_id))
+        row = cur.fetchone()
+        if row['cnt'] == 0:
+            cur.close()
+            conn.close()
+            return jsonify({'error': '해당 식단이 존재하지 않습니다.'}), 404
+
+        # 식단 수정 쿼리
+        cur.execute('''
+            UPDATE diets
+            SET menu = %s, date = %s, time = %s
+            WHERE id = %s AND user_id = %s
+        ''', (menu, date, time, meal_id, user_id))
         
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify({'status': 'success'})
+    
+    @app.route('/modify/delete', methods=['POST'])
+    def delete_meal():
+        data = request.get_json()
+        meal_id = data.get('id')
+
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'Invalid user ID'}), 400
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # 해당 식단이 존재하고, 본인의 것인지 확인
+        cur.execute('SELECT COUNT(*) AS cnt FROM diets WHERE id = %s AND user_id = %s', (meal_id, user_id))
+        row = cur.fetchone()
+        if row['cnt'] == 0:
+            cur.close()
+            conn.close()
+            return jsonify({'error': '해당 식단이 존재하지 않거나 권한이 없습니다.'}), 403
+
+        # 삭제 쿼리
+        cur.execute('DELETE FROM diets WHERE id = %s AND user_id = %s', (meal_id, user_id))
+        conn.commit()
+
+        cur.close()
+        conn.close()
+        return jsonify({'status': 'success'})
+
     # 임시 html 라우팅
     @app.route('/mypage')
     def mypage():
