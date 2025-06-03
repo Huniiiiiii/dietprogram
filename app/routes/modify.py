@@ -253,54 +253,6 @@ def register_routes(app):
     @app.route('/info',methods = ['GET'])
     def info():
         return render_template("info.html")
-    
-    @app.route('/login', methods=['GET','POST'])
-    def login():
-        if request.method == 'POST':
-            username = request.form['username']
-            password = request.form['password']
-            conn = get_db_connection()
-            with conn.cursor() as cur:
-                cur.execute(
-                  "SELECT id FROM users WHERE name=%s AND password=%s",
-                  (username, password)
-                )
-                user = cur.fetchone()
-            conn.close()
-            if user:
-                session['user_id'] = user['id']
-                return redirect(url_for('modify_meal'))
-            else:
-                flash('잘못된 아이디 또는 비밀번호입니다.', 'error')
-                return redirect(url_for('login'))
-        return render_template('login.html')
-    
-    @app.route('/register', methods=['GET','POST'])
-    def register():
-        if request.method == 'POST':
-            username = request.form['username']
-            fullname = request.form['fullname']
-            password = request.form['password']
-            conn = get_db_connection()
-            with conn.cursor() as cur:
-                cur.execute("SELECT id FROM users WHERE name=%s", (username,))
-                if cur.fetchone():
-                    flash('이미 존재하는 아이디입니다.', 'error')
-                    return redirect(url_for('register'))
-                cur.execute(
-                  "INSERT INTO users (name,password,fullname) VALUES (%s,%s,%s)",
-                  (username, password,fullname)
-                )
-                conn.commit()
-            conn.close()
-            flash('회원가입이 완료되었습니다. 로그인 해주세요.', 'success')
-            return redirect(url_for('login'))
-        return render_template('register.html')
-    
-    @app.route('/logout')
-    def logout():
-        session.clear()
-        return redirect(url_for('login'))
 
     @app.route('/home')
     def home_page():
